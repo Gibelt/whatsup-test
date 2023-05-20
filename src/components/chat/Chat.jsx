@@ -1,11 +1,10 @@
+/* eslint-disable react/no-array-index-key */
 import { useState, useEffect } from 'react'
 import s from './Chat.module.css'
 
 const API_URL = 'https://api.green-api.com'
-const idInstance = '1101822412'
-const apiTokenInstance = 'bb34a807e25144949d7de8d43cc10c33e19698bdc4d24bc8bf'
 
-export default function Chat({message, chatID}) {
+export default function Chat({ message, chatID, idInstance, apiToken }) {
   const [history, setHistory] = useState([])
   const [textValue, setTextValue] = useState('')
 
@@ -14,47 +13,47 @@ export default function Chat({message, chatID}) {
   }
 
   const onSendButtonClick = () => {
-    setHistory([...history, {text: textValue,
-      type: "out",
-    }])
+    setHistory([...history, { text: textValue, type: 'out' }])
     setTextValue('')
-    fetch(
-      `${API_URL}/waInstance${idInstance}/SendMessage/${apiTokenInstance}`,
-      {
-        method: "POST",
-        body: JSON.stringify({ 
-          chatId: chatID,
-          message: textValue
-         })
-      }
-    )
+    fetch(`${API_URL}/waInstance${idInstance}/SendMessage/${apiToken}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        chatId: `${chatID}@c.us`,
+        message: textValue,
+      }),
+    })
       .then((resp) => resp.json())
       .then((data) => {
         console.log(data)
-      }).catch(e => console.log(e.message))
+      })
+      .catch((e) => console.log(e.message))
   }
 
   useEffect(() => {
-    setHistory([...history, {text: message,
-      type: "in",
-    }])
-    return (() => {
-      window.localStorage.setItem('history', history)
-    })
+    setHistory([])
+    console.log('clear')
+  }, [chatID])
+
+  useEffect(() => {
+    setHistory([...history, { text: message, type: 'in' }])
   }, [message])
 
-  const list = history.map(item => <p key={item.text.toString()} className={s[item.type]}>{item.text}</p>)
+  const list = history.map((item, index) => (
+    <p key={index} className={s[item.type]}>
+      {item.text}
+    </p>
+  ))
 
   return (
     <div className={s.container}>
       <div className={s.messages}>
         {list}
-        <p className={s.in}>Привет</p>
-        <p className={s.out}>Зравствуй</p>
       </div>
       <div className={s.input_content}>
         <input className={s.input} onChange={onInputChange} value={textValue} />
-        <button className={s.button} type='button' onClick={onSendButtonClick}>Отправить</button>
+        <button className={s.button} type="button" onClick={onSendButtonClick}>
+          Отправить
+        </button>
       </div>
     </div>
   )
