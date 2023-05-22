@@ -50,7 +50,7 @@ function App() {
               )
             })
             .catch((e) => {
-              console.log('error', e.message)
+              console.log(e.message)
             }),
         5000
       )
