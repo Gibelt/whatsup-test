@@ -1,0 +1,16 @@
+.content {
+  background-color: aliceblue;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  gap: 15px;
+}
+
+.input_id {
+  align-self: end;
+}
+
+.input_token {
+  align-self: end;
+}
