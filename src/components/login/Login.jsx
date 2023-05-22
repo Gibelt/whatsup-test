@@ -24,7 +24,7 @@ export default function Login({setID, setToken}) {
       <div className={s.input_id}>
         <label htmlFor="idInstance">
           IdInstance:
-          <input type='number' name="idInstance" onChange={onIdInputChange} value={idValue} />
+          <input type='text' name="idInstance" onChange={onIdInputChange} value={idValue} />
         </label>
       </div>
       <div className={s.input_token}>
