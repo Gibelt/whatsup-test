@@ -5,6 +5,11 @@
   align-items: center;
   padding: 30px;
   gap: 15px;
+  border-radius: 10px;
+}
+
+.title {
+  font-size: 25px;
 }
 
 .input_id {
@@ -13,4 +18,30 @@
 
 .input_token {
   align-self: end;
+}
+
+.input {
+  margin-left: 10px;
+  border: 0.5px solid black;
+  border-radius: 6px;
+  padding: 5px 8px;
+}
+
+.status_content {
+}
+
+.error_text {
+  color: red;
+}
+
+.loading_text {
+  color: lightseagreen;
+}
+
+.enter_button {
+  border: navajowhite;
+  padding: 12px 35px;
+  background-color: lawngreen;
+  border-radius: 5px;
+  font-size: 16px;
 }
