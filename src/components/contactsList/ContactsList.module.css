@@ -2,3 +2,19 @@
     width: 50%;
     border-right: 1px solid white;
 }
+
+.item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: #111b21;
+    min-height: 72px;
+    border-bottom: 1px solid #fff;
+    padding-left: 20px;
+    cursor: pointer;
+}
+
+.title {
+    color: #fff;
+    font-size: 18px;
+}
