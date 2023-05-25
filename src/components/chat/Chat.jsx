@@ -18,7 +18,7 @@ export default function Chat({ message, chatID, idInstance, apiToken }) {
     fetch(`${API_URL}/waInstance${idInstance}/SendMessage/${apiToken}`, {
       method: 'POST',
       body: JSON.stringify({
-        chatId: `${chatID}@c.us`,
+        chatId: chatID,
         message: textValue,
       }),
     })
@@ -30,25 +30,31 @@ export default function Chat({ message, chatID, idInstance, apiToken }) {
   }
 
   useEffect(() => {
-    setHistory([])
-    console.log('clear')
+    localStorage.setItem(chatID, JSON.stringify(history))
+  }, [history])
+
+  useEffect(() => {
+    if (JSON.parse(localStorage.getItem(chatID))) {
+      setHistory(JSON.parse(localStorage.getItem(chatID)))
+    } else {
+      setHistory([])
+    }
   }, [chatID])
 
   useEffect(() => {
     setHistory([...history, { text: message, type: 'in' }])
   }, [message])
 
-  const list = history.map((item, index) => (
-    <p key={index} className={s[item.type]}>
-      {item.text}
-    </p>
-  ))
+  const list =
+    history.map((item, index) => (
+      <p key={index} className={s[item.type]}>
+        {item.text}
+      </p>
+    )) || []
 
   return (
     <div className={s.container}>
-      <div className={s.messages}>
-        {list}
-      </div>
+      <div className={s.messages}>{list}</div>
       <div className={s.input_content}>
         <input className={s.input} onChange={onInputChange} value={textValue} />
         <button className={s.button} type="button" onClick={onSendButtonClick}>

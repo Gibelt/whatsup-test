@@ -1,4 +1,3 @@
-import whatsAppClient from '@green-api/whatsapp-api-client'
 import { useState } from 'react'
 import s from './Login.module.css'
 
@@ -6,7 +5,7 @@ export default function Login({ setID, setToken }) {
   const [idValue, setIdValue] = useState('')
   const [tokenValue, setTokenValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(false)
+  const [isError, setIsError] = useState(false)
 
   const onIdInputChange = (e) => {
     setIdValue(e.target.value)
@@ -18,21 +17,21 @@ export default function Login({ setID, setToken }) {
 
   const onEnterButtonClick = () => {
     ;(async () => {
-      setError(false)
+      setIsError(false)
       setIsLoading(true)
-      const restAPI = whatsAppClient.restAPI({
-        idInstance: idValue,
-        apiTokenInstance: tokenValue,
-      })
       try {
-        await restAPI.webhookService.receiveNotification()
+        await fetch(
+          `https://api.green-api.com/waInstance${idValue}/getStateInstance/${tokenValue}`
+        )
         setID(idValue)
         setToken(tokenValue)
+        localStorage.setItem('id', idValue)
+        localStorage.setItem('token', tokenValue)
         setIsLoading(false)
-      } catch (ex) {
-        console.warn(ex.message)
+      } catch (error) {
+        console.error(error.message)
         setIsLoading(false)
-        setError(true)
+        setIsError(true)
       }
     })()
   }
@@ -64,11 +63,15 @@ export default function Login({ setID, setToken }) {
           />
         </label>
       </div>
-      <button type="button" className={s.enter_button} onClick={onEnterButtonClick}>
+      <button
+        type="button"
+        className={s.enter_button}
+        onClick={onEnterButtonClick}
+      >
         Войти
       </button>
       <div className={s.status_content}>
-        {error && <p className={s.error_text}>Ошибка: неверные данные.</p>}
+        {isError && <p className={s.error_text}>Ошибка: неверные данные.</p>}
         {isLoading && <p className={s.loading_text}>Загрузка</p>}
       </div>
     </div>
