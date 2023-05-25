@@ -3,13 +3,13 @@
 import s from './ContactsList.module.css'
 
 export default function ContactsList({ contacts, setChatId }) {
-  const list = contacts.map((name) => (
+  const list = contacts.map((item) => (
     <div
-      key={name.chatId}
+      key={item.chatId}
       className={s.item}
-      onClick={() => setChatId(name.chatId)}
+      onClick={() => setChatId(item.chatId)}
     >
-      <p className={s.title}>{name.chatId.split('@')[0]}</p>
+      <p className={s.title}>{item.chatId.split('@')[0]}</p>
     </div>
   ))
   return <div className={s.content}>{list}</div>

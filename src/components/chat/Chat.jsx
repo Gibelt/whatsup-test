@@ -1,5 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import { useState, useEffect } from 'react'
+import { storeMessagesByChatId, getMessagesByChatId } from '../api/api'
 import s from './Chat.module.css'
 
 const API_URL = 'https://api.green-api.com'
@@ -26,16 +27,18 @@ export default function Chat({ message, chatID, idInstance, apiToken }) {
       .then((data) => {
         console.log(data)
       })
-      .catch((e) => console.log(e.message))
+      .catch((e) => console.error(e.message))
   }
 
   useEffect(() => {
-    localStorage.setItem(chatID, JSON.stringify(history))
+    if (chatID && history.length !== 0) {
+      storeMessagesByChatId(chatID, history)
+    }
   }, [history])
 
   useEffect(() => {
-    if (JSON.parse(localStorage.getItem(chatID))) {
-      setHistory(JSON.parse(localStorage.getItem(chatID)))
+    if (getMessagesByChatId(chatID)) {
+      setHistory(getMessagesByChatId(chatID))
     } else {
       setHistory([])
     }

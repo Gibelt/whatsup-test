@@ -1,5 +1,6 @@
 import whatsAppClient from '@green-api/whatsapp-api-client'
 import { useEffect, useState } from 'react'
+import { storeContacts, getContacts } from './components/api/api'
 import ContactsList from './components/contactsList/ContactsList'
 import Chat from './components/chat/Chat'
 import Login from './components/login/Login'
@@ -7,13 +8,28 @@ import s from './App.module.css'
 
 function App() {
   const [contacts, setContacts] = useState(
-    JSON.parse(localStorage.getItem('contacts')) || []
+    getContacts() || []
   )
   const [message, setMessage] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [chatId, setChatId] = useState('')
   const [idInstance, setIdInstance] = useState(localStorage.getItem('id') || '')
   const [apiToken, setApiToken] = useState(localStorage.getItem('token') || '')
+
+  const setAndFilterContacts = (id, name = '') => {
+    setContacts((old) =>
+      [
+        ...old,
+        {
+          chatId: id.includes('@') ? id : `${id}@c.us`,
+          chatName: name,
+        },
+      ].filter(
+        (obj, index, array) =>
+          array.findIndex((item) => item.chatId === obj.chatId) === index
+      )
+    )
+  }
 
   const onExitButtonClick = () => {
     setIdInstance('')
@@ -28,24 +44,12 @@ function App() {
 
   const onStartChatButtonClick = () => {
     setChatId(`${phoneNumber}@c.us`)
-    setContacts((old) =>
-      [
-        ...old,
-        {
-          chatId: `${phoneNumber}@c.us`,
-          chatName: '',
-        },
-      ].reduce((o, i) => {
-        if (!o.find((v) => v.chatId === i.chatId)) {
-          o.push(i)
-        }
-        return o
-      }, [])
-    )
+    setAndFilterContacts(phoneNumber)
+    setPhoneNumber('')
   }
 
   useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts))
+    storeContacts(contacts)
   }, [contacts])
 
   useEffect(() => {
@@ -63,20 +67,7 @@ function App() {
         restAPI.webhookService.onReceivingMessageText((body) => {
           setChatId(body.senderData.chatId)
           setMessage(body.messageData.textMessageData.textMessage)
-          setContacts((old) =>
-            [
-              ...old,
-              {
-                chatId: body.senderData.chatId,
-                chatName: body.senderData.chatName,
-              },
-            ].reduce((o, i) => {
-              if (!o.find((v) => v.chatId === i.chatId)) {
-                o.push(i)
-              }
-              return o
-            }, [])
-          )
+          setAndFilterContacts(body.senderData.chatId, body.senderData.chatName)
         })
       } catch (error) {
         console.error(error)
