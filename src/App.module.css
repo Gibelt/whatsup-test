@@ -16,19 +16,46 @@
 .content {
   display: flex;
   height: 100%;
+  overflow: auto;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
-  background: darkgrey;
-  align-items: center;
+  background-color: #42f5a1;
   padding: 20px;
 }
 
+.phone_input_content {
+  display: flex;
+}
+
+.input_label {
+  font-weight: 600;
+  font-size: 20px;
+}
+
 .phone_input {
-  margin-left: 10px;
+  margin: 0 10px;
   border-radius: 6px;
   border: none;
   padding: 3px 10px;
+  font-size: 18px;
+}
+
+.start_button {
+  padding: 0 18px;
+  border-radius: 4px;
+  border: none;
+  background-color: mediumturquoise;
+  font-size: 16px;
+}
+
+.exit_button {
+  padding: 0 18px;
+  border-radius: 4px;
+  border: none;
+  background-color: red;
+  font-size: 16px;
+  font-weight: 600;
 }

@@ -5,7 +5,7 @@ export default function Login({ setID, setToken }) {
   const [idValue, setIdValue] = useState('')
   const [tokenValue, setTokenValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [isError, setIsError] = useState(false)
+  const [isError, setIsError] = useState('')
 
   const onIdInputChange = (e) => {
     setIdValue(e.target.value)
@@ -17,21 +17,28 @@ export default function Login({ setID, setToken }) {
 
   const onEnterButtonClick = () => {
     ;(async () => {
-      setIsError(false)
+      setIsError('')
       setIsLoading(true)
       try {
-        await fetch(
+        const data = await fetch(
           `https://api.green-api.com/waInstance${idValue}/getStateInstance/${tokenValue}`
         )
-        setID(idValue)
-        setToken(tokenValue)
-        localStorage.setItem('id', idValue)
-        localStorage.setItem('token', tokenValue)
-        setIsLoading(false)
+        const response = await data.json()
+        if (response.stateInstance === 'authorized') {
+
+          setID(idValue)
+          setToken(tokenValue)
+          localStorage.setItem('id', idValue)
+          localStorage.setItem('token', tokenValue)
+          setIsLoading(false)
+        } else {
+          setIsError(response.stateInstance)
+          setIsLoading(false)
+        }
       } catch (error) {
         console.error(error.message)
         setIsLoading(false)
-        setIsError(true)
+        setIsError('Неверные данные')
       }
     })()
   }
@@ -71,7 +78,7 @@ export default function Login({ setID, setToken }) {
         Войти
       </button>
       <div className={s.status_content}>
-        {isError && <p className={s.error_text}>Ошибка: неверные данные.</p>}
+        {isError && <p className={s.error_text}>{isError}</p>}
         {isLoading && <p className={s.loading_text}>Загрузка</p>}
       </div>
     </div>
