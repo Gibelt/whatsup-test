@@ -2,15 +2,24 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import s from './ContactsList.module.css'
 
-export default function ContactsList({ contacts, setChatId }) {
-  const list = contacts.map((item) => (
+export default function ContactsList({
+  contacts,
+  setCurrentChat,
+  currentChat,
+}) {
+  const list = contacts.map((contact) => (
     <div
-      key={item.chatId}
-      className={s.item}
-      onClick={() => setChatId(item.chatId)}
+      key={contact.chatId}
+      className={
+        currentChat === contact.chatId
+          ? `${s.contact} ${s.active}`
+          : `${s.contact}`
+      }
+      onClick={() => setCurrentChat(contact.chatId)}
     >
-      <p className={s.title}>{item.chatId.split('@')[0]}</p>
+      <p className={s.contact_title}>{contact.chatId.split('@')[0]}</p>
     </div>
   ))
+
   return <div className={s.content}>{list}</div>
 }

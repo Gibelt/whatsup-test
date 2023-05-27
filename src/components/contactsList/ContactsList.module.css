@@ -1,9 +1,11 @@
 .content {
     width: 50%;
     border-right: 1px solid white;
+    border-top: 1px solid white;
+    overflow: auto;
 }
 
-.item {
+.contact {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -14,7 +16,13 @@
     cursor: pointer;
 }
 
-.title {
+.active {
+    background-color: #42f5a1;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.contact_title {
     color: #fff;
     font-size: 18px;
 }
