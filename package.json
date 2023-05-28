@@ -1,7 +1,7 @@
 {
   "name": "whatsup-test",
   "version": "0.1.0",
-  "homepage": "https://gibelt.github.io",
+  "homepage": "https://gibelt.github.io/",
   "private": true,
   "dependencies": {
     "@green-api/whatsapp-api-client": "^0.3.35",
