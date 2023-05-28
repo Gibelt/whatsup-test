@@ -1,5 +1,5 @@
 .content {
-  background-color: aliceblue;
+  background-color: #f1f4f7;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,10 +21,16 @@
 }
 
 .input {
+  width: 300px;
+  height: 30px;
+  font-size: 16px;
   margin-left: 10px;
-  border: 0.5px solid black;
-  border-radius: 6px;
-  padding: 5px 8px;
+  border: none;
+  padding: 5px 20px;
+  outline: none;
+  background: #ffffff;
+  box-shadow: 0px 7px 15px rgba(0, 0, 0, 0.05);
+  border-radius: 60px;
 }
 
 .status_content {
@@ -39,9 +45,10 @@
 }
 
 .enter_button {
-  border: navajowhite;
+  border: none;
   padding: 12px 35px;
-  background-color: lawngreen;
-  border-radius: 5px;
+  background-color: #61c554;
+  box-shadow: 0px 7px 15px rgba(0, 0, 0, 0.05);
+  border-radius: 110px;
   font-size: 16px;
 }

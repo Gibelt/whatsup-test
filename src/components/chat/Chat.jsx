@@ -5,7 +5,7 @@ import {
   getMessagesByChatId,
   storeBackgroundMessagesByChatId,
   getBackgroundMessagesByChatId,
-  removeBackgroundMessagesByChatId
+  removeBackgroundMessagesByChatId,
 } from '../api/api'
 import s from './Chat.module.css'
 
@@ -24,6 +24,7 @@ export default function Chat({
   const [textValue, setTextValue] = useState('')
   const [isDisabled, setIsDisabled] = useState(true)
   const divRef = useRef(null)
+  const textInput = useRef(null)
 
   const onInputChange = (e) => {
     setTextValue(e.target.value)
@@ -46,6 +47,12 @@ export default function Chat({
       .catch((e) => console.error(e.message))
   }
 
+  const onEnterKeyPress = (e) => {
+    if (!e.shiftKey && e.keyCode === 13) {
+      onSendButtonClick()
+    }
+  }
+
   useEffect(() => {
     if (message !== '' && chatID !== currentChat) {
       storeBackgroundMessagesByChatId(chatID, backgroundHistory)
@@ -61,6 +68,7 @@ export default function Chat({
 
   useEffect(() => {
     setTextValue('')
+    textInput.current.focus()
     if (getMessagesByChatId(currentChat)) {
       setHistory(getMessagesByChatId(currentChat))
       if (getBackgroundMessagesByChatId(currentChat)) {
@@ -82,7 +90,10 @@ export default function Chat({
 
   useEffect(() => {
     if (message !== '' && chatID !== currentChat) {
-      setBackgroundHistory([...backgroundHistory, { text: message, type: 'in' }])
+      setBackgroundHistory([
+        ...backgroundHistory,
+        { text: message, type: 'in' },
+      ])
       if (getBackgroundMessagesByChatId(chatID)) {
         const back = getBackgroundMessagesByChatId(chatID)
         setBackgroundHistory([...back, { text: message, type: 'in' }])
@@ -107,7 +118,13 @@ export default function Chat({
         <div ref={divRef} />
       </div>
       <div className={s.input_content}>
-        <input className={s.input} onChange={onInputChange} value={textValue} />
+        <input
+          className={s.input}
+          onChange={onInputChange}
+          value={textValue}
+          ref={textInput}
+          onKeyDown={onEnterKeyPress}
+        />
         <button
           className={s.button}
           type="button"
