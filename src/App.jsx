@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import whatsAppClient from '@green-api/whatsapp-api-client'
 import { useEffect, useState } from 'react'
 import _ from 'lodash'
@@ -64,12 +65,13 @@ function App() {
     if (idInstance === '' || apiToken === '') {
       return
     }
-    ;(async () => {
-      const restAPI = whatsAppClient.restAPI({
-        idInstance,
-        apiTokenInstance: apiToken,
-      })
 
+    const restAPI = whatsAppClient.restAPI({
+      idInstance,
+      apiTokenInstance: apiToken,
+    })
+
+    ;(async () => {
       try {
         await restAPI.webhookService.startReceivingNotifications()
         restAPI.webhookService.onReceivingMessageText((body) => {
@@ -83,6 +85,9 @@ function App() {
         console.error(error)
       }
     })()
+    return () => {
+      restAPI.webhookService.stopReceivingNotifications()
+    }
   }, [idInstance, apiToken])
 
   return (
