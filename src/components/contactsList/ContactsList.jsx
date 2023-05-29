@@ -1,12 +1,8 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
+import storeChatContacts from '../hooks/useStoreChatContacts'
 import s from './ContactsList.module.css'
 
-export default function ContactsList({
-  contacts,
-  setCurrentChat,
-  currentChat,
-}) {
+export default function ContactsList({ userChatId, chatId, setCurrentChat, currentChat }) {
+  const { contacts } = storeChatContacts(chatId, userChatId)
   const list = contacts.map((contact) => (
     <div
       key={contact.chatId}
