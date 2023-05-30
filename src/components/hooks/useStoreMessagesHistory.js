@@ -5,7 +5,7 @@ import {
   storeBackgroundMessagesByChatId,
   getBackgroundMessagesByChatId,
   removeBackgroundMessagesByChatId,
-} from '../ls-service/ls-service'
+} from '../../ls-service/ls-service'
 
 export default function useStoreMessagesHistory(
   messageOut,
@@ -24,7 +24,10 @@ export default function useStoreMessagesHistory(
   }, [history])
 
   useEffect(() => {
-    setHistory([...history, { text: messageOut, type: 'out' }])
+    setHistory([
+      ...history,
+      { text: messageOut, type: 'out', id: crypto.randomUUID() },
+    ])
   }, [messageOut])
 
   useEffect(() => {
@@ -49,16 +52,22 @@ export default function useStoreMessagesHistory(
     if (message !== '' && chatId !== currentChat) {
       setBackgroundHistory([
         ...backgroundHistory,
-        { text: message, type: 'in' },
+        { text: message, type: 'in', id: crypto.randomUUID() },
       ])
       if (getBackgroundMessagesByChatId(chatId)) {
         const back = getBackgroundMessagesByChatId(chatId)
-        setBackgroundHistory([...back, { text: message, type: 'in' }])
+        setBackgroundHistory([
+          ...back,
+          { text: message, type: 'in', id: crypto.randomUUID() },
+        ])
       }
     }
 
     if (message !== '' && chatId === currentChat) {
-      setHistory([...history, { text: message, type: 'in' }])
+      setHistory([
+        ...history,
+        { text: message, type: 'in', id: crypto.randomUUID() },
+      ])
     }
   }, [messageId])
 

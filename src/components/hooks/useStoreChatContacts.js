@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import _ from 'lodash'
-import { storeContacts, getContacts } from '../ls-service/ls-service'
+import { storeContacts, getContacts } from '../../ls-service/ls-service'
 
 export default function useStoreChatContacts(idIn, idOut, name = '') {
   const [contacts, setContacts] = useState(getContacts() || [])
@@ -18,7 +18,7 @@ export default function useStoreChatContacts(idIn, idOut, name = '') {
         [
           ...old,
           {
-            chatId: idIn ,
+            chatId: idIn,
             chatName: name,
           },
         ],
@@ -36,7 +36,7 @@ export default function useStoreChatContacts(idIn, idOut, name = '') {
         [
           ...old,
           {
-            chatId: idOut ,
+            chatId: idOut,
             chatName: name,
           },
         ],
