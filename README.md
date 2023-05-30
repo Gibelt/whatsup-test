@@ -23,5 +23,6 @@ React, Javascript, lodash, CSS modules
 
 #### Контакты для связи по всем вопросам
 
-+ [IgorOp3@gmail.com](IgorOp3@gmail.com)
++ +79148808738
++ IgorOp3@gmail.com
 + [https://t.me/igor_oparin](https://t.me/igor_oparin)
