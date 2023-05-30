@@ -23,5 +23,5 @@ React, Javascript, lodash, CSS modules
 
 #### Контакты для связи по всем вопросам
 
-[IgorOp3@gmail.com](IgorOp3@gmail.com)
-[https://t.me/igor_oparin](https://t.me/igor_oparin)
++ [IgorOp3@gmail.com](IgorOp3@gmail.com)
++ [https://t.me/igor_oparin](https://t.me/igor_oparin)
