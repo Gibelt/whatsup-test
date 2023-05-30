@@ -3,28 +3,34 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
-  background-color: #86949e;
+  background-color: #f1f4f7;
   width: 100%;
   box-sizing: border-box;
   padding: 10px 40px;
 }
 
 .in {
-  color: #000;
+  font-weight: 400;
+  line-height: 16px;
+  color: #fff;
   align-self: flex-start;
-  background-color: #42f5a1;
+  background-color: #61c554;
   display: inline-block;
-  padding: 8px 25px;
-  border-radius: 6px;
+  padding: 15px;
+  border-radius: 10px;
+  max-width: 50%;
 }
 
 .out {
+  font-weight: 400;
+  line-height: 16px;
   color: #000;
   align-self: flex-end;
-  background-color: blanchedalmond;
+  background-color: #e8ecef;
   display: inline-block;
-  padding: 8px 25px;
-  border-radius: 6px;
+  padding: 15px;
+  border-radius: 10px;
+  max-width: 50%;
 }
 
 .messages {
@@ -39,7 +45,7 @@
 
 .input_content {
   width: 90%;
-  min-height: 35px;
+  height: 50px;
   display: flex;
   align-items: center;
 }
@@ -48,15 +54,21 @@
   width: 80%;
   height: 100%;
   margin-right: 20px;
-  font-size: 20px;
+  font-size: 16px;
   box-sizing: border-box;
-  border-radius: 6px;
   border: none;
+  padding: 16px 30px;
+  outline: none;
+  background: #ffffff;
+  box-shadow: 0px 7px 15px rgba(0, 0, 0, 0.05);
+  border-radius: 60px;
 }
 
 .button {
   height: 100%;
   width: 100px;
-  background-color: deepskyblue;
-  border-radius: 6px;
+  background-color: #61c554;
+  box-shadow: 0px 7px 15px rgba(0, 0, 0, 0.05);
+  border-radius: 110px;
+  border: none; 
 }

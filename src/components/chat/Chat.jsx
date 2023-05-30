@@ -1,76 +1,50 @@
-/* eslint-disable react/no-array-index-key */
 import { useState, useEffect, useRef } from 'react'
-import {
-  storeMessagesByChatId,
-  getMessagesByChatId,
-  storeBackgroundMessagesByChatId,
-  getBackgroundMessagesByChatId,
-  removeBackgroundMessagesByChatId
-} from '../api/api'
+import useStoreMessagesHistory from '../hooks/useStoreMessagesHistory'
+import { SendMessage } from '../api/api'
 import s from './Chat.module.css'
-
-const API_URL = 'https://api.green-api.com'
 
 export default function Chat({
   message,
   messageId,
-  chatID,
+  chatId,
   idInstance,
   apiToken,
   currentChat,
 }) {
-  const [history, setHistory] = useState(getMessagesByChatId(currentChat))
-  const [backgroundHistory, setBackgroundHistory] = useState([])
   const [textValue, setTextValue] = useState('')
+  const [messageOut, setMessageOut] = useState('')
   const [isDisabled, setIsDisabled] = useState(true)
   const divRef = useRef(null)
+  const textInput = useRef(null)
+  const { history } = useStoreMessagesHistory(
+    messageOut,
+    message,
+    messageId,
+    chatId,
+    currentChat
+  )
 
   const onInputChange = (e) => {
     setTextValue(e.target.value)
   }
 
   const onSendButtonClick = () => {
-    setHistory([...history, { text: textValue, type: 'out' }])
+    setMessageOut(textValue)
     setTextValue('')
-    fetch(`${API_URL}/waInstance${idInstance}/SendMessage/${apiToken}`, {
-      method: 'POST',
-      body: JSON.stringify({
-        chatId: currentChat,
-        message: textValue,
-      }),
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
-        console.log(data)
-      })
-      .catch((e) => console.error(e.message))
+    SendMessage(idInstance, apiToken, currentChat, textValue)
+  }
+
+  const onEnterKeyPress = (e) => {
+    if (!e.shiftKey && e.keyCode === 13) {
+      onSendButtonClick()
+    }
   }
 
   useEffect(() => {
-    if (message !== '' && chatID !== currentChat) {
-      storeBackgroundMessagesByChatId(chatID, backgroundHistory)
-    }
-  }, [backgroundHistory])
-
-  useEffect(() => {
-    divRef.current.scrollIntoView()
-    if (currentChat && history.length !== 0) {
-      storeMessagesByChatId(currentChat, history)
-    }
-  }, [history])
-
-  useEffect(() => {
     setTextValue('')
-    if (getMessagesByChatId(currentChat)) {
-      setHistory(getMessagesByChatId(currentChat))
-      if (getBackgroundMessagesByChatId(currentChat)) {
-        const back = getBackgroundMessagesByChatId(currentChat)
-        setHistory((old) => [...old, ...back])
-        removeBackgroundMessagesByChatId(currentChat)
-        setBackgroundHistory([])
-      }
-    }
-  }, [currentChat])
+    divRef.current.scrollIntoView()
+    textInput.current.focus()
+  }, [currentChat, history])
 
   useEffect(() => {
     if (!currentChat || !textValue) {
@@ -79,19 +53,6 @@ export default function Chat({
       setIsDisabled(false)
     }
   }, [textValue])
-
-  useEffect(() => {
-    if (message !== '' && chatID !== currentChat) {
-      setBackgroundHistory([...backgroundHistory, { text: message, type: 'in' }])
-      if (getBackgroundMessagesByChatId(chatID)) {
-        const back = getBackgroundMessagesByChatId(chatID)
-        setBackgroundHistory([...back, { text: message, type: 'in' }])
-      }
-    }
-    if (message !== '' && chatID === currentChat) {
-      setHistory([...history, { text: message, type: 'in' }])
-    }
-  }, [messageId])
 
   const list =
     history.map((item, index) => (
@@ -107,7 +68,13 @@ export default function Chat({
         <div ref={divRef} />
       </div>
       <div className={s.input_content}>
-        <input className={s.input} onChange={onInputChange} value={textValue} />
+        <input
+          className={s.input}
+          onChange={onInputChange}
+          value={textValue}
+          ref={textInput}
+          onKeyDown={onEnterKeyPress}
+        />
         <button
           className={s.button}
           type="button"
