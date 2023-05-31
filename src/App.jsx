@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { StartListenNotification } from './components/api/api'
+import { startListenNotification } from './api/api'
 import ContactsList from './components/contactsList/ContactsList'
 import Chat from './components/chat/Chat'
 import Login from './components/login/Login'
@@ -11,7 +11,7 @@ function App() {
   const [idInstance, setIdInstance] = useState(localStorage.getItem('id') || '')
   const [apiToken, setApiToken] = useState(localStorage.getItem('token') || '')
   const [userChatId, setUserChatId] = useState('')
-  const { message, messageId, chatId } = StartListenNotification(
+  const { message, messageId, chatId } = startListenNotification(
     idInstance,
     apiToken
   )

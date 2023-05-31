@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Auth } from '../api/api'
+import { auth } from '../../api/api'
 import s from './Login.module.css'
 
 export default function Login({ setID, setToken }) {
@@ -7,7 +7,7 @@ export default function Login({ setID, setToken }) {
   const [tokenValue, setTokenValue] = useState('')
   const [id, setId] = useState('')
   const [apiToken, setApiToken] = useState('')
-  const {isError, isLoading} = Auth(id, apiToken, setID, setToken)
+  const { isError, isLoading } = auth(id, apiToken, setID, setToken)
 
   const onIdInputChange = (e) => {
     setIdValue(e.target.value)

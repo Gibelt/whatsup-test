@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import useStoreMessagesHistory from '../hooks/useStoreMessagesHistory'
-import { SendMessage } from '../api/api'
+import { sendMessage } from '../../api/api'
 import s from './Chat.module.css'
 
 export default function Chat({
@@ -31,7 +31,7 @@ export default function Chat({
   const onSendButtonClick = () => {
     setMessageOut(textValue)
     setTextValue('')
-    SendMessage(idInstance, apiToken, currentChat, textValue)
+    sendMessage(idInstance, apiToken, currentChat, textValue)
   }
 
   const onEnterKeyPress = (e) => {
@@ -55,8 +55,8 @@ export default function Chat({
   }, [textValue])
 
   const list =
-    history.map((item, index) => (
-      <p key={index} className={s[item.type]}>
+    history.map(item => (
+      <p key={item.id} className={s[item.type]}>
         {item.text}
       </p>
     )) || []
