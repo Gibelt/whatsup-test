@@ -8,7 +8,7 @@
 
 ### Использованные технологии
 
-React, Javascript, lodash, CSS modules
+React, Javascript, CSS modules
 
 ### Ссылка на проект
 
