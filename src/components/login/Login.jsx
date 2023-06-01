@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { auth } from '../../api/api'
 import s from './Login.module.css'
 
 export default function Login({ setID, setToken }) {
@@ -16,31 +17,21 @@ export default function Login({ setID, setToken }) {
   }
 
   const onEnterButtonClick = () => {
-    ;(async () => {
-      setIsError('')
-      setIsLoading(true)
-      try {
-        const data = await fetch(
-          `https://api.green-api.com/waInstance${idValue}/getStateInstance/${tokenValue}`
-        )
-        const response = await data.json()
-        if (response.stateInstance === 'authorized') {
-
-          setID(idValue)
-          setToken(tokenValue)
-          localStorage.setItem('id', idValue)
-          localStorage.setItem('token', tokenValue)
-          setIsLoading(false)
-        } else {
-          setIsError(response.stateInstance)
-          setIsLoading(false)
+    setIsLoading(true)
+    setIsError('')
+    auth(idValue, tokenValue)
+      .then((resp) => {
+        if (resp.id && resp.token) {
+          setID(resp.id)
+          setToken(resp.token)
+          localStorage.setItem('id', resp.id)
+          localStorage.setItem('token', resp.token)
         }
-      } catch (error) {
-        console.error(error.message)
-        setIsLoading(false)
-        setIsError('Неверные данные')
-      }
-    })()
+
+        setIsError(resp.isError)
+        setIsLoading(resp.isLoading)
+      })
+      .catch((error) => console.error('Ошибка', error.message))
   }
 
   return (

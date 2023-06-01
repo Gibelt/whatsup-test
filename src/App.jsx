@@ -1,94 +1,83 @@
-/* eslint-disable consistent-return */
-import whatsAppClient from '@green-api/whatsapp-api-client'
-import { useEffect, useState } from 'react'
-import _ from 'lodash'
-import { storeContacts, getContacts } from './components/api/api'
+import { useState, useEffect } from 'react'
+import { receiveMessage } from './api/api'
 import ContactsList from './components/contactsList/ContactsList'
 import Chat from './components/chat/Chat'
 import Login from './components/login/Login'
+import Header from './components/header/Header'
 import s from './App.module.css'
 
 function App() {
-  const [contacts, setContacts] = useState(getContacts() || [])
-  const [message, setMessage] = useState('')
-  const [messageId, setMessageId] = useState('')
-  const [phoneNumber, setPhoneNumber] = useState('')
   const [currentChat, setCurrentChat] = useState('')
-  const [chatId, setChatId] = useState('')
   const [idInstance, setIdInstance] = useState(localStorage.getItem('id') || '')
   const [apiToken, setApiToken] = useState(localStorage.getItem('token') || '')
+  const [history, setHistory] = useState(
+    JSON.parse(localStorage.getItem('history')) || {}
+  )
 
-  const setAndFilterContacts = (id, name = '') => {
-    setContacts((old) =>
-      _.unionBy(
-        [
-          ...old,
-          {
-            chatId: id.includes('@') ? id : `${id}@c.us`,
-            chatName: name,
-          },
-        ],
-        'chatId'
-      )
-    )
-  }
+  let isRequestPending = false
 
-  const onExitButtonClick = () => {
-    setIdInstance('')
-    setApiToken('')
-    localStorage.removeItem('id')
-    localStorage.removeItem('token')
-    getContacts().map((contact) => localStorage.removeItem(contact.chatId))
-    localStorage.removeItem('contacts')
-    setContacts([])
-    setChatId('')
-    setMessage('')
-    setMessageId('')
-  }
-
-  const onPnoneNumbetInputChange = (e) => {
-    setPhoneNumber(e.target.value)
-  }
-
-  const onStartChatButtonClick = () => {
-    setChatId(`${phoneNumber}@c.us`)
-    setAndFilterContacts(phoneNumber)
-    setCurrentChat(`${phoneNumber}@c.us`)
-    setPhoneNumber('')
+  function handleReceiveMessage() {
+    if (!isRequestPending) {
+      isRequestPending = true
+      receiveMessage('ReceiveNotification', idInstance, apiToken)
+        .then((data) => {
+          if (!data) {
+            isRequestPending = false
+            return
+          }
+          setHistory((oldValue) => {
+            if (Object.keys(oldValue).includes(data.senderId)) {
+              return {
+                ...oldValue,
+                [data.senderId]: [
+                  ...oldValue[data.senderId],
+                  {
+                    type: 'in',
+                    text: data.textMessage,
+                    id: crypto.randomUUID(),
+                  },
+                ],
+              }
+            }
+            return {
+              ...oldValue,
+              [data.senderId]: [
+                {
+                  type: 'in',
+                  text: data.textMessage,
+                  id: crypto.randomUUID(),
+                },
+              ],
+            }
+          })
+          // setMessage(data.textMessage)
+          // setChatIdIn(data.senderId)
+          // setMessageId(data.messId)
+        })
+        .catch((error) => {
+          isRequestPending = false
+          console.error('Ошибка при получении сообщения:', error)
+        })
+        .finally(() => {
+          isRequestPending = false
+        })
+    }
   }
 
   useEffect(() => {
-    storeContacts(contacts)
-  }, [contacts])
-
-  useEffect(() => {
-    if (idInstance === '' || apiToken === '') {
-      return
+    let intervalId
+    if (idInstance !== '' || apiToken !== '') {
+      intervalId = setInterval(handleReceiveMessage, 5000)
     }
 
-    const restAPI = whatsAppClient.restAPI({
-      idInstance,
-      apiTokenInstance: apiToken,
-    })
-
-    ;(async () => {
-      try {
-        await restAPI.webhookService.startReceivingNotifications()
-        restAPI.webhookService.onReceivingMessageText((body) => {
-          console.log(body)
-          setChatId(body.senderData.chatId)
-          setMessage(body.messageData.textMessageData.textMessage)
-          setMessageId(body.idMessage)
-          setAndFilterContacts(body.senderData.chatId, body.senderData.chatName)
-        })
-      } catch (error) {
-        console.error(error)
-      }
-    })()
     return () => {
-      restAPI.webhookService.stopReceivingNotifications()
+      clearInterval(intervalId)
     }
   }, [idInstance, apiToken])
+
+  useEffect(() => {
+    localStorage.setItem('history', JSON.stringify(history))
+  }, [history])
 
   return (
     <div className={s.app}>
@@ -97,46 +86,23 @@ function App() {
           <Login setID={setIdInstance} setToken={setApiToken} />
         ) : (
           <div className={s.container}>
-            <div className={s.header}>
-              <div className={s.phone_input_content}>
-                <label htmlFor="phone-number" className={s.input_label}>
-                  Введите номер чтобы начать чат:
-                  <input
-                    className={s.phone_input}
-                    type="number"
-                    name="phone-number"
-                    value={phoneNumber}
-                    onChange={onPnoneNumbetInputChange}
-                  />
-                </label>
-                <button
-                  type="button"
-                  className={s.start_button}
-                  onClick={onStartChatButtonClick}
-                >
-                  Начать
-                </button>
-              </div>
-              <button
-                type="button"
-                className={s.exit_button}
-                onClick={onExitButtonClick}
-              >
-                Выйти
-              </button>
-            </div>
+            <Header
+              setIdInstance={setIdInstance}
+              setApiToken={setApiToken}
+              setCurrentChat={setCurrentChat}
+              history={history}
+              setHistory={setHistory}
+            />
             <div className={s.content}>
               <ContactsList
-                contacts={contacts}
                 setCurrentChat={setCurrentChat}
                 currentChat={currentChat}
+                contacts={Object.keys(history)}
               />
               <Chat
+                history={history[currentChat] || []}
+                setHistory={setHistory}
                 currentChat={currentChat}
-                setMessage={setMessage}
-                message={message}
-                messageId={messageId}
-                chatID={chatId}
                 idInstance={idInstance}
                 apiToken={apiToken}
               />
