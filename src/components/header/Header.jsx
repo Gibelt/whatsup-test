@@ -22,7 +22,7 @@ export default function Header({
     setPhoneNumber(e.target.value)
   }
 
-  const onStartChatButtonClick = () => {
+  const setUserChatHandler = () => {
     setCurrentChat(`${phoneNumber}@c.us`)
     setPhoneNumber('')
     setHistory((oldValue) => {
@@ -39,12 +39,19 @@ export default function Header({
     })
   }
 
+  const onEnterKeyPress = (e) => {
+    if (!e.shiftKey && e.keyCode === 13) {
+      setUserChatHandler()
+    }
+  }
+
   return (
     <div className={s.header}>
       <div className={s.phone_input_content}>
         <label htmlFor="phone-number" className={s.input_label}>
           Введите номер чтобы начать чат:
           <input
+          onKeyDown={onEnterKeyPress}
             className={s.phone_input}
             type="number"
             name="phone-number"
@@ -55,7 +62,7 @@ export default function Header({
         <button
           type="button"
           className={s.start_button}
-          onClick={onStartChatButtonClick}
+          onClick={setUserChatHandler}
         >
           Начать
         </button>
