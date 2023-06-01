@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { getContacts } from '../../ls-service/ls-service'
 import s from './Header.module.css'
 
 export default function Header({
-  setUserChatId,
   setIdInstance,
   setApiToken,
   setCurrentChat,
+  setHistory,
 }) {
   const [phoneNumber, setPhoneNumber] = useState('')
 
@@ -15,9 +14,8 @@ export default function Header({
     setApiToken('')
     localStorage.removeItem('id')
     localStorage.removeItem('token')
-    setUserChatId('')
-    getContacts().forEach((contact) => localStorage.removeItem(contact.chatId))
-    localStorage.removeItem('contacts')
+    setHistory({})
+    localStorage.removeItem('history')
   }
 
   const onPnoneNumbetInputChange = (e) => {
@@ -25,9 +23,20 @@ export default function Header({
   }
 
   const onStartChatButtonClick = () => {
-    setUserChatId(`${phoneNumber}@c.us`)
     setCurrentChat(`${phoneNumber}@c.us`)
     setPhoneNumber('')
+    setHistory((oldValue) => {
+      if (Object.keys(oldValue).includes(`${phoneNumber}@c.us`)) {
+        return {
+          ...oldValue,
+          [`${phoneNumber}@c.us`]: [...oldValue[`${phoneNumber}@c.us`]],
+        }
+      }
+      return {
+        ...oldValue,
+        [`${phoneNumber}@c.us`]: [],
+      }
+    })
   }
 
   return (

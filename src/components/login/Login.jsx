@@ -5,9 +5,8 @@ import s from './Login.module.css'
 export default function Login({ setID, setToken }) {
   const [idValue, setIdValue] = useState('')
   const [tokenValue, setTokenValue] = useState('')
-  const [id, setId] = useState('')
-  const [apiToken, setApiToken] = useState('')
-  const { isError, isLoading } = auth(id, apiToken, setID, setToken)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState('')
 
   const onIdInputChange = (e) => {
     setIdValue(e.target.value)
@@ -18,8 +17,21 @@ export default function Login({ setID, setToken }) {
   }
 
   const onEnterButtonClick = () => {
-    setId(idValue)
-    setApiToken(tokenValue)
+    setIsLoading(true)
+    setIsError('')
+    auth(idValue, tokenValue)
+      .then((resp) => {
+        if (resp.id && resp.token) {
+          setID(resp.id)
+          setToken(resp.token)
+          localStorage.setItem('id', resp.id)
+          localStorage.setItem('token', resp.token)
+        }
+
+        setIsError(resp.isError)
+        setIsLoading(resp.isLoading)
+      })
+      .catch((error) => console.error('Ошибка', error.message))
   }
 
   return (

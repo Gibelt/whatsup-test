@@ -1,35 +1,49 @@
 import { useState, useEffect, useRef } from 'react'
-import useStoreMessagesHistory from '../hooks/useStoreMessagesHistory'
 import { sendMessage } from '../../api/api'
 import s from './Chat.module.css'
 
 export default function Chat({
-  message,
-  messageId,
-  chatId,
   idInstance,
   apiToken,
   currentChat,
+  history,
+  setHistory,
 }) {
   const [textValue, setTextValue] = useState('')
-  const [messageOut, setMessageOut] = useState('')
   const [isDisabled, setIsDisabled] = useState(true)
   const divRef = useRef(null)
   const textInput = useRef(null)
-  const { history } = useStoreMessagesHistory(
-    messageOut,
-    message,
-    messageId,
-    chatId,
-    currentChat
-  )
 
   const onInputChange = (e) => {
     setTextValue(e.target.value)
   }
 
   const onSendButtonClick = () => {
-    setMessageOut(textValue)
+    setHistory((oldValue) => {
+      if (Object.keys(oldValue).includes(currentChat)) {
+        return {
+          ...oldValue,
+          [currentChat]: [
+            ...oldValue[currentChat],
+            {
+              type: 'out',
+              text: textValue,
+              id: crypto.randomUUID(),
+            },
+          ],
+        }
+      }
+      return {
+        ...oldValue,
+        [currentChat]: [
+          {
+            type: 'out',
+            text: textValue,
+            id: crypto.randomUUID(),
+          },
+        ],
+      }
+    })
     setTextValue('')
     sendMessage(idInstance, apiToken, currentChat, textValue)
   }
@@ -55,7 +69,7 @@ export default function Chat({
   }, [textValue])
 
   const list =
-    history.map(item => (
+    history.map((item) => (
       <p key={item.id} className={s[item.type]}>
         {item.text}
       </p>
